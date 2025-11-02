@@ -34,14 +34,17 @@ ui <- fluidPage(
         tabPanel("Sleep Measures",
                  fluidRow(
                    column(6, plotlyOutput("sleep_duration", height = "400px")), 
-                   column(6, plotlyOutput("sleep_quality", height = "400px"))
+                   column(6, plotlyOutput("sleep_quality", height = "400px")),
+                   style = "margin-top: 20px; margin-bottom: 60px;"
                  ),
                  fluidRow(
-                   column(12, plotlyOutput("sleep_disorder", height = "400px"))
+                   column(12, plotlyOutput("sleep_disorder", height = "400px")),
+                   style = "margin-bottom: 60px;"
                  ),
                  fluidRow(
                    column(6, plotlyOutput("sleep_duration_violin", height = "400px")),
-                   column(6, plotlyOutput("duration_vs_quality", height = "400px"))
+                   column(6, plotlyOutput("duration_vs_quality", height = "400px")),
+                   style = "margin-bottom: 60px;"
                  )
         ),
         
@@ -51,15 +54,18 @@ ui <- fluidPage(
                    column(6,
                           selectInput("age_outcome", "Sleep health measure",
                                       choices = c("Sleep Duration" = "Sleep.Duration",
-                                                  "Sleep Quality" = "Quality.of.Sleep"))
+                                                  "Sleep Quality" = "Quality.of.Sleep")),
+                          style = "margin-top: 20px; margin-bottom: 60px;"
                    )
                  ),
                  fluidRow(
                    column(6, plotlyOutput("age_sleep")),
-                   column(6, plotlyOutput("agegroup_sleep"))
+                   column(6, plotlyOutput("agegroup_sleep")),
+                   style = "margin-bottom: 60px;"
                  ),
                  fluidRow(
-                   column(12, plotlyOutput("occupation_sleep", height = "600px"))
+                   column(12, plotlyOutput("occupation_sleep", height = "600px")),
+                   style = "margin-bottom: 60px;"
                  )
         ),
         
@@ -67,10 +73,12 @@ ui <- fluidPage(
         tabPanel("Physical Health Indicators",
                  fluidRow(
                    column(6, plotlyOutput("activity_sleep")),
-                   column(6, plotlyOutput("steps_sleep"))
+                   column(6, plotlyOutput("steps_sleep")),
+                   style = "margin-top: 20px; margin-bottom: 60px;"
                  ),
                  fluidRow(
-                   column(6, plotlyOutput("bmi_sleep"))
+                   column(6, plotlyOutput("bmi_sleep")),
+                   style = "margin-bottom: 60px;"
                  )
         ),
         
@@ -83,10 +91,12 @@ ui <- fluidPage(
                                                   "Sleep Quality" = "Quality.of.Sleep")),
                           plotlyOutput("stress_sleep", height = "400px")
                    ),
-                   column(6, plotlyOutput("heart_sleep", height = "400px"))
+                   column(6, plotlyOutput("heart_sleep", height = "400px")),
+                   style = "margin-top: 20px; margin-bottom: 60px;"
                  ),
                  fluidRow(
-                   column(12, plotlyOutput("bp_sleep", height = "400px"))
+                   column(12, plotlyOutput("bp_sleep", height = "400px")),
+                   style = "margin-bottom: 60px;"
                  )
         )
       )
@@ -242,15 +252,29 @@ server <- function(input, output) {
       ungroup()
     
     plot_ly(
-      data, x = ~prop, y = ~Occupation,
+      data,
+      x = ~prop,
+      y = ~Occupation,
       color = ~as.factor(Quality.of.Sleep),
-      type = "bar", orientation = "h",
-      marker = list(line = list(color = "white", width = 0.3))
+      type = "bar",
+      orientation = "h",
+      text = ~paste0(
+        "Occupation: ", Occupation, "<br>",
+        "Sleep Quality: ", Quality.of.Sleep, "<br>",
+        "Count: ", n, "<br>",
+        "Percent: ", scales::percent(prop, accuracy = 0.1)
+      ),
+      hoverinfo = "text",
+      marker = list(line = list(color = "white", width = 0.3)),
+      colors = c("navyblue", "mediumblue", "dodgerblue", 
+                 "lightskyblue", "lightblue1", "lightcyan1")
     ) %>%
       layout(
-        title = "Sleep Quality per Occupation",
         barmode = "stack",
-        xaxis = list(title = "Proportion"),
+        bargap = 0.5,
+        title = "Sleep Quality per Occupation",
+        xaxis = list(title = "", tickformat = ".0%"),
+        yaxis = list(title = ""),
         legend = list(title = list(text = "Sleep Quality"))
       )
   })
